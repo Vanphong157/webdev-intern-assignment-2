@@ -8,6 +8,8 @@ function App() {
   const [forecastData, setForecastData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   const fetchWeather = async (location) => {
     setLoading(true);
@@ -77,6 +79,39 @@ function App() {
     } else {
       console.error("Geolocation is not supported by this browser.");
       setError("Geolocation is not supported by this browser.");
+    }
+  };
+
+  const handleRegister = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      console.log(data);
+      setMessage(data.message);
+    } catch (error) {
+      setMessage("Error registering email.");
+    }
+  };
+
+  const handleUnsubscribe = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/unsubscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      setMessage(data.message);
+    } catch (error) {
+      setMessage("Error unsubscribing email.");
     }
   };
 
@@ -156,6 +191,53 @@ function App() {
               Use Current Location
             </Button>
           </Box>
+          <Box sx={{ mb: 2 }}>
+            <Typography fontWeight={800}>Enter your email</Typography>
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              sx={{ width: "100%" }}
+              placeholder="example@gmail.com"
+            />
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <Button
+              onClick={handleRegister}
+              variant="contained"
+              sx={{
+                width: "100%",
+                backgroundColor: "#6DB33F",
+                "&:hover": {
+                  backgroundColor: "#22D172",
+                },
+              }}
+            >
+              Register
+            </Button>
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <Button
+              onClick={handleUnsubscribe}
+              variant="contained"
+              sx={{
+                width: "100%",
+                backgroundColor: "#D93025",
+                "&:hover": {
+                  backgroundColor: "#BB5846",
+                },
+              }}
+            >
+              Unsubscribe
+            </Button>
+          </Box>
+          {message && (
+            <Box sx={{ mb: 2 }}>
+              <Typography color="error">{message}</Typography>
+            </Box>
+          )}
         </Grid>
         <Grid item md={8}>
           <Grid
