@@ -10,12 +10,13 @@ function App() {
   const [error, setError] = useState(null);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [emailStorge, setEmailStorge] = useState("");
 
   const fetchWeather = async (location) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:8080/fetch-weather", {
+      const response = await fetch("http://localhost:8000/fetch-weather", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,7 +38,7 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:8080/fetch-forecast", {
+      const response = await fetch("http://localhost:8000/fetch-forecast", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +85,7 @@ function App() {
 
   const handleRegister = async () => {
     try {
-      const response = await fetch("http://localhost:8080/register", {
+      const response = await fetch("http://localhost:8000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +102,7 @@ function App() {
 
   const handleUnsubscribe = async () => {
     try {
-      const response = await fetch("http://localhost:8080/unsubscribe", {
+      const response = await fetch("http://localhost:8000/unsubscribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -112,6 +113,22 @@ function App() {
       setMessage(data.message);
     } catch (error) {
       setMessage("Error unsubscribing email.");
+    }
+  };
+
+  const handleSendWeatherEmail = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/send-weather-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ emailStorge, weatherData }),
+      });
+      const data = await response.json();
+      setMessage(data.message);
+    } catch (error) {
+      setMessage("Error sending weather email.");
     }
   };
 
@@ -292,6 +309,40 @@ function App() {
                 </Grid>
               </>
             )}
+          </Grid>
+          <Grid margin={2}>
+            <Typography fontWeight={800} variant="h6">
+              Send weather-infor to Email
+            </Typography>
+            <Grid container alignItems={"center"}>
+              <Grid item md={5}>
+                <Box>
+                  <Input
+                    type="email"
+                    value={emailStorge}
+                    onChange={(e) => setEmailStorge(e.target.value)}
+                    sx={{ width: "100%" }}
+                    placeholder="example@gmail.com"
+                  />
+                </Box>
+              </Grid>
+              <Grid item md={5}>
+                <Box sx={{ marginLeft: 2 }}>
+                  <Button
+                    onClick={handleSendWeatherEmail}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "#FFA726",
+                      "&:hover": {
+                        backgroundColor: "#FB8C00",
+                      },
+                    }}
+                  >
+                    Send Weather Info
+                  </Button>
+                </Box>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid margin={2}>
             <Typography fontWeight={800} variant="h6">
